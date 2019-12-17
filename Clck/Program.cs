@@ -6,23 +6,33 @@ namespace Clck
 {
     class Program
     {
-        Point cursorLoc = new Point(0, 0);
-        Point numberLoc = new Point(10, 10);
-        private string temporaryNumber = "";
-        private double firstNumber;
-        private double secondNumber;
-        private byte action = 0;
+        static Point cursorLoc = new Point(0, 0);
+        static Point numberLoc = new Point(10, 10);
+        private static string temporaryNumber = "";
+        private static double firstNumber;
+        private static double secondNumber;
+        static Operation action = Operation.nothing;
 
         static void Main(string[] args)
         {
-            Program method = new Program();
-            Console.Write("1 2 3 + *\n4 5 6 - %\n7 8 9 / =\n√ 0 .\n");
-            Console.WriteLine("Наберите первое число!");
-            Console.SetCursorPosition(0, 0);
-            method.checkKey();
+
+            restart();
         }
 
-        private void checkKey()
+        private static void restart()
+        {
+            Console.Clear();
+            action = Operation.nothing;
+            temporaryNumber = "";
+            cursorLoc = new Point(0, 0);
+            numberLoc = new Point(10, 10);
+            Console.Write("1 2 3 + *\n4 5 6 - %\n7 8 9 / =\n√ 0 .");
+            Console.WriteLine("Наберите первое число!");
+            Console.SetCursorPosition(0, 0);
+            checkKey();
+        }
+
+        private static void checkKey()
         {
             switch (Console.ReadKey(true).Key)
             {
@@ -34,23 +44,17 @@ namespace Clck
                         Console.SetCursorPosition(cursorLoc.X, cursorLoc.Y);
                     }
 
-                    checkKey();
                     break;
 
                 case ConsoleKey.RightArrow:
 
-                    if (cursorLoc.X < 8 && cursorLoc.Y != 3)
-                    {
-                        cursorLoc.X += 2;
-                        Console.SetCursorPosition(cursorLoc.X, cursorLoc.Y);
-                    }
-                    if (cursorLoc.X < 4 && cursorLoc.Y == 3)
+                    if (cursorLoc.X < 8 && cursorLoc.Y != 3 ||
+                        cursorLoc.X < 4 && cursorLoc.Y == 3)
                     {
                         cursorLoc.X += 2;
                         Console.SetCursorPosition(cursorLoc.X, cursorLoc.Y);
                     }
 
-                    checkKey();
                     break;
 
                 case ConsoleKey.UpArrow:
@@ -61,88 +65,30 @@ namespace Clck
                         Console.SetCursorPosition(cursorLoc.X, cursorLoc.Y);
                     }
 
-                    checkKey();
                     break;
 
                 case ConsoleKey.DownArrow:
 
-                    if (cursorLoc.Y == 2 && cursorLoc.X < 6)
+                    if (cursorLoc.Y == 2 && cursorLoc.X < 6 ||
+                        cursorLoc.Y < 2 && cursorLoc.X <= 8)
                     {
                         cursorLoc.Y += 1;
                         Console.SetCursorPosition(cursorLoc.X, cursorLoc.Y);
                     }
 
-                    if (cursorLoc.Y < 2 && cursorLoc.X <= 8)
-                    {
-                        cursorLoc.Y += 1;
-                        Console.SetCursorPosition(cursorLoc.X, cursorLoc.Y);
-                    }
-
-                    checkKey();
                     break;
 
                 case ConsoleKey.Enter:
 
                     Console.SetCursorPosition(numberLoc.X, numberLoc.Y);
-                    if (cursorLoc == new Point(0, 0))
-                    {
-                        Console.Write("1");
-                        temporaryNumber += "1";
-                    }
 
-                    if (cursorLoc == new Point(2, 0))
+                    if (cursorLoc.X < 6 && cursorLoc.Y < 3 ||
+                        cursorLoc.X == 2 && cursorLoc.Y == 3)
                     {
-                        Console.Write("2");
-                        temporaryNumber += "2";
-                    }
+                        int cursorNumber = (int)number[cursorLoc.Y][cursorLoc.X / 2];
+                        Console.Write(cursorNumber);
+                        temporaryNumber += cursorNumber;
 
-                    if (cursorLoc == new Point(4, 0))
-                    {
-                        Console.Write("3");
-                        temporaryNumber += "3";
-                    }
-
-                    if (cursorLoc == new Point(0, 1))
-                    {
-
-                        Console.Write("4");
-                        temporaryNumber += "4";
-                    }
-
-                    if (cursorLoc == new Point(2, 1))
-                    {
-                        Console.Write("5");
-                        temporaryNumber += "5";
-                    }
-
-                    if (cursorLoc == new Point(4, 1))
-                    {
-                        Console.Write("6");
-                        temporaryNumber += "6";
-                    }
-
-                    if (cursorLoc == new Point(0, 2))
-                    {
-                        Console.Write("7");
-                        temporaryNumber += "7";
-                    }
-
-                    if (cursorLoc == new Point(2, 2))
-                    {
-                        Console.Write("8");
-                        temporaryNumber += "8";
-                    }
-
-                    if (cursorLoc == new Point(4, 2))
-                    {
-                        Console.Write("9");
-                        temporaryNumber += "9";
-                    }
-
-                    if (cursorLoc == new Point(2, 3))
-                    {
-                        Console.Write("0");
-                        temporaryNumber += "0";
                     }
 
                     if (cursorLoc == new Point(4, 3))
@@ -163,129 +109,142 @@ namespace Clck
 
                     if (temporaryNumber != "")
                     {
-                        if (cursorLoc == new Point(6, 0) && action == 0)
+                        if (cursorLoc == new Point(6, 0) && action == Operation.nothing)
                         {
                             Console.Write("\n Наберите второе число");
-                            action = 1;
+                            action = Operation.sum;
                             firstNumber = Convert.ToDouble(temporaryNumber);
-                            temporaryNumber = "";
-                            numberLoc.Y += 2;
-                            numberLoc.X = 10;
+                            NextNumber();
                         }
 
-                        if (cursorLoc == new Point(6, 1) && action == 0)
+                        if (cursorLoc == new Point(6, 1) && action == Operation.nothing)
                         {
                             Console.Write("\n Наберите второе число");
-                            action = 2;
+                            action = Operation.minus;
                             firstNumber = Convert.ToDouble(temporaryNumber);
-                            temporaryNumber = "";
-                            numberLoc.Y += 2;
-                            numberLoc.X = 10;
+                            NextNumber();
                         }
 
-                        if (cursorLoc == new Point(6, 2) && action == 0)
+                        if (cursorLoc == new Point(6, 2) && action == Operation.nothing)
                         {
                             Console.Write("\n Наберите второе число");
-                            action = 3;
+                            action = Operation.divide;
                             firstNumber = Convert.ToDouble(temporaryNumber);
-                            temporaryNumber = "";
-                            numberLoc.Y += 2;
-                            numberLoc.X = 10;
+                            NextNumber();
                         }
 
-                        if (cursorLoc == new Point(8, 0) && action == 0)
+                        if (cursorLoc == new Point(8, 0) && action == Operation.nothing)
                         {
                             Console.Write("\n Наберите второе число");
-                            action = 4;
+                            action = Operation.multiply;
                             firstNumber = Convert.ToDouble(temporaryNumber);
-                            temporaryNumber = "";
-                            numberLoc.Y += 2;
-                            numberLoc.X = 10;
+                            NextNumber();
                         }
 
-                        if (cursorLoc == new Point(8, 1) && action == 0)
+                        if (cursorLoc == new Point(8, 1) && action == Operation.nothing)
                         {
-                            action = 5;
+                            action = Operation.percent;
                             firstNumber = Convert.ToDouble(temporaryNumber);
-                            temporaryNumber = "";
-                            numberLoc.Y += 1;
-                            numberLoc.X = 10;
+                            NextNumber();
                             getResult();
+                            return;
                         }
 
-                        if (cursorLoc == new Point(8, 2) && action != 0)
+                        if (cursorLoc == new Point(8, 2) && action != Operation.nothing)
                         {
                             secondNumber = Convert.ToDouble(temporaryNumber);
-                            temporaryNumber = "";
-                            numberLoc.Y += 1;
-                            numberLoc.X = 10;
+                            NextNumber();
                             getResult();
-                            break;
+                            return;
                         }
-                        if (cursorLoc == new Point(0, 3) && action == 0)
+                        if (cursorLoc == new Point(0, 3) && action == Operation.nothing)
                         {
-                            action = 6;
+                            action = Operation.sqrt;
                             firstNumber = Convert.ToDouble(temporaryNumber);
-                            temporaryNumber = "";
-                            numberLoc.Y += 1;
-                            numberLoc.X = 10;
+                            NextNumber();
                             getResult();
-                            break;
+                            return;
                         }
-
                     }
 
                     numberLoc.X++;
                     Console.SetCursorPosition(cursorLoc.X, cursorLoc.Y);
-                    checkKey();
-                    break;
-                default:
-                    checkKey();
                     break;
             }
+            checkKey();
         }
 
-        private void getResult()
+        private static void getResult()
         {
+            double result = 0;
             Console.SetCursorPosition(10, 15);
             Console.Write("Result is: ");
             switch (action)
             {
-                case 1:
-                    Console.WriteLine(firstNumber + secondNumber);
+                case Operation.sum:
+                    result = firstNumber + secondNumber;
                     break;
-                case 2:
-                    Console.WriteLine(firstNumber - secondNumber);
+                case Operation.minus:
+                    result = firstNumber - secondNumber;
                     break;
-                case 3:
-                    Console.WriteLine(firstNumber / secondNumber);
+                case Operation.divide:
+                    result = firstNumber / secondNumber;
                     break;
-                case 4:
-                    Console.WriteLine(firstNumber * secondNumber);
+                case Operation.multiply:
+                    result = firstNumber * secondNumber;
                     break;
-                case 5:
-                    Console.WriteLine(firstNumber / 100);
+                case Operation.percent:
+                    result = firstNumber / 100;
                     break;
-                case 6:
-                    Console.WriteLine(Math.Sqrt(firstNumber));
+                case Operation.sqrt:
+                    result = Math.Sqrt(firstNumber);
                     break;
             }
+            Console.WriteLine(result);
             Console.WriteLine("Press any key to restart");
             Console.ReadKey();
             restart();
         }
 
-        private void restart()
+        enum Operation
         {
-            Console.Clear();
-            temporaryNumber = "";
-            cursorLoc = new Point(0, 0);
-            numberLoc = new Point(10, 10);
-            action = 0;
-            Console.Write("1 2 3 + *\n4 5 6 - %\n7 8 9 / =\n√ 0 .");
-            Console.WriteLine("Наберите первое число!");
-            Console.SetCursorPosition(0, 0);
-            checkKey();
+            sum,
+            divide,
+            multiply,
+            sqrt,
+            minus,
+            percent,
+            nothing
         }
+
+        enum Numbers
+        {
+            zero,
+            one,
+            two,
+            three,
+            four,
+            five,
+            six,
+            seven,
+            eight,
+            nine,
+        }
+
+        private static Numbers[][] number =
+        {
+            new[] {Numbers.one, Numbers.two, Numbers.three},
+            new[] {Numbers.four, Numbers.five, Numbers.six},
+            new[] {Numbers.seven, Numbers.eight, Numbers.nine},
+            new[] {Numbers.zero, Numbers.zero, Numbers.zero}
+        };
+
+        private static void NextNumber()
+        {
+            numberLoc.Y += 2;
+            numberLoc.X = 10;
+            temporaryNumber = "";
+        }
+
     }
 }
