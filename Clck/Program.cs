@@ -2,6 +2,7 @@
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Linq.Expressions;
 using Clck.Helpers;
 using Clck;
 
@@ -12,21 +13,23 @@ namespace Clck
         public static Point cursorLoc = new Point(0, 0);
         private static string temporaryNumber = "";
         private static string permanentNumber = "";
-        public static bool IsMenuEnable = false;
         private static double firstNumber;
         private static double secondNumber;
         static Operation action = Operation.nothing;
 
         static void Main(string[] args)
         {
-            Console.Write("1 2 3 + *\n4 5 6 - %\n7 8 9 / =\n√ 0 .\nShow menu\n");
+            Console.Write("1 2 3 + *\n" +
+                          "4 5 6 - %\n" +
+                          "7 8 9 / =\n" +
+                          "√ 0 .\n" +
+                          "Show menu\n");
             Restart();
         }
 
         public static void Restart()
         {
             cursorLoc = new Point(0, 0);
-            IsMenuEnable = false;
             action = Operation.nothing;
             AddToVariable("\n");
             temporaryNumber = "";
@@ -73,39 +76,39 @@ namespace Clck
                     case ConsoleKey.Enter:
 
                         if (cursorLoc.X < 6 && cursorLoc.Y < 3 ||
-                            cursorLoc.X == 2 && cursorLoc.Y == 3)
+                            cursorLoc.X == 2 && cursorLoc.Y == 3) // Buttons with number 1-9
                         {
-                            int cursorNumber = (int) number[cursorLoc.Y][cursorLoc.X / 2];
-                            AddToVariable(Convert.ToString(cursorNumber));
+                            int selectedNumber = (int) number[cursorLoc.Y][cursorLoc.X / 2];
+                            AddToVariable(Convert.ToString(selectedNumber));
                         }
 
-                        if (cursorLoc.Y == 4)
+                        if (cursorLoc.Y == 4) // Button "Show Menu"
                         {
                             Menu.Show();
                             break;
                         }
 
-                        if (cursorLoc == new Point(4, 3))
+                        if (cursorLoc == new Point(4, 3)) // Button ","
                         {
                             if (temporaryNumber == "")
                             {
                                 AddToVariable("0");
                             }
 
-                            if (temporaryNumber != "" && temporaryNumber.Last() != ',')
+                            if (temporaryNumber != "" && !temporaryNumber.Contains(','))
                             {
                                 AddToVariable(",");
                             }
                         }
 
-                        if (cursorLoc == new Point(6, 1) && action == Operation.nothing && temporaryNumber == "")
+                        if (cursorLoc == new Point(6, 1) && action == Operation.nothing && temporaryNumber == "") // Button "-"
                         {
                             AddToVariable("-");
                         }
 
                         if (temporaryNumber != "")
                         {
-                            if (cursorLoc == new Point(6, 0) && action == Operation.nothing)
+                            if (cursorLoc == new Point(6, 0) && action == Operation.nothing) // Button add
                             {
                                 AddToVariable("+");
                                 action = Operation.sum;
@@ -114,12 +117,13 @@ namespace Clck
                             }
 
                             if (cursorLoc == new Point(6, 1) && action == Operation.nothing &&
-                                temporaryNumber.Last() != '-')
+                                temporaryNumber.Last() != '-') // button minus
                             {
                                 AddToVariable("-");
                                 action = Operation.minus;
                                 firstNumber = Convert.ToDouble(temporaryNumber);
                                 NextNumber();
+                                
                             }
 
                             if (cursorLoc == new Point(6, 2) && action == Operation.nothing)
@@ -185,9 +189,7 @@ namespace Clck
 
         private static void WriteLog(string text)
         {
-            StreamWriter fs = new StreamWriter("Log.txt", true);
-            fs.WriteLine(text);
-            fs.Close();
+            File.AppendAllText("Log.txt",$"{text}\n");
         }
 
         private static double GetResult(Operation action)

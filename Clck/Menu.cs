@@ -15,7 +15,10 @@ namespace Clck
             lineNumber = 0;
             Program.cursorLoc = new Point(0,0);
             Console.Clear();
-            Console.Write("Show log\nBack to calculate\nExit");
+            Console.Write("Show log\n" +
+                          "Clear log\n" +
+                          "Back to calculate\n" +
+                          "Exit");
             Console.SetCursorPosition(Program.cursorLoc.X, Program.cursorLoc.Y);
             CheckMenu();
         }
@@ -33,9 +36,10 @@ namespace Clck
             {
                 case ConsoleKey.DownArrow:
 
-                    if (lineNumber < 2)
+                    if (lineNumber < 3)
                        lineNumber++;
                     break;
+
                 case ConsoleKey.UpArrow:
 
                     if (lineNumber > 0)
@@ -48,42 +52,38 @@ namespace Clck
                     {
                         IsLogActive = true;
                         Console.Clear();
-                        Console.Write(ReadLogFile());
+                        Console.Write(File.ReadAllText("Log.txt"));
                         Console.WriteLine("Press any key to return in menu");
                     }
 
                     if (lineNumber == 1)
                     {
+                        File.WriteAllText("Log.txt","");
+                        IsLogActive = true;
                         Console.Clear();
-                        Console.SetCursorPosition(0, 0);
-                        Console.Write("1 2 3 + *\n4 5 6 - %\n7 8 9 / =\n√ 0 .\nShow menu\n");
-                        Program.Restart();
+                        Console.WriteLine("Log is clear\n" +
+                                          "Press any key to return in menu");
                     }
 
                     if (lineNumber == 2)
+                    {
+                        Console.Clear();
+                        Console.SetCursorPosition(0, 0);
+                        Console.Write("1 2 3 + *\n" +
+                                      "4 5 6 - %\n" +
+                                      "7 8 9 / =\n" +
+                                      "√ 0 .\n" +
+                                      "Show menu\n");
+                        Program.Restart();
+                    }
+
+                    if (lineNumber == 3)
                         Environment.Exit(0);
                     break;
             }
 
             Console.SetCursorPosition(0, lineNumber);
             CheckMenu();
-        }
-
-        private static string ReadLogFile()
-        {
-            try
-            {  
-                using (StreamReader sr = new StreamReader("Log.txt"))
-                {
-                    String line = sr.ReadToEnd();
-                    sr.Close();
-                    return line;
-                }
-            }
-            catch (IOException e)
-            {
-                return "Log does not exists";
-            }
         }
     }
 }
