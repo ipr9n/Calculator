@@ -19,11 +19,7 @@ namespace Clck
 
         static void Main(string[] args)
         {
-            Console.Write("1 2 3 + *\n" +
-                          "4 5 6 - %\n" +
-                          "7 8 9 / =\n" +
-                          "√ 0 .\n" +
-                          "Show menu\n");
+           MenuHeads.Show(Helpers.MenuHeads.Calculate);
             Restart();
         }
 
@@ -187,7 +183,7 @@ namespace Clck
             Console.SetCursorPosition(cursorLoc.X, cursorLoc.Y);
         }
 
-        private static void WriteLog(string text)
+        public static void WriteLog(string text)
         {
             File.AppendAllText("Log.txt",$"{text}\n");
         }

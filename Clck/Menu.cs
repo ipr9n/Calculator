@@ -14,11 +14,7 @@ namespace Clck
         {
             lineNumber = 0;
             Program.cursorLoc = new Point(0,0);
-            Console.Clear();
-            Console.Write("Show log\n" +
-                          "Clear log\n" +
-                          "Back to calculate\n" +
-                          "Exit");
+           MenuHeads.Show(Helpers.MenuHeads.MainMenu);
             Console.SetCursorPosition(Program.cursorLoc.X, Program.cursorLoc.Y);
             CheckMenu();
         }
@@ -67,17 +63,19 @@ namespace Clck
 
                     if (lineNumber == 2)
                     {
-                        Console.Clear();
-                        Console.SetCursorPosition(0, 0);
-                        Console.Write("1 2 3 + *\n" +
-                                      "4 5 6 - %\n" +
-                                      "7 8 9 / =\n" +
-                                      "√ 0 .\n" +
-                                      "Show menu\n");
+                       MenuHeads.Show(Helpers.MenuHeads.Calculate);
                         Program.Restart();
+                      
+                        break;
                     }
 
                     if (lineNumber == 3)
+                    {
+                        ArrayMenu.Show();
+                        break;
+                    }
+
+                    if (lineNumber == 4)
                         Environment.Exit(0);
                     break;
             }

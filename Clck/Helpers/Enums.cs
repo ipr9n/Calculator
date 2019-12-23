@@ -29,4 +29,12 @@ namespace Clck.Helpers
         nine,
     }
 
+    enum MenuHeads
+    {
+        Calculate,
+        MainMenu,
+        ArrayOperations,
+        ArrayMenu
+    }
+
 }
