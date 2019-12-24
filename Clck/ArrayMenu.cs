@@ -12,6 +12,9 @@ namespace Clck
         private static int lineNumber = 0;
         private static int columnNumber = 0;
         public static int[] oneDimensionArray;
+        public static Point sizeSecondDimentionArray = new Point(0, 0);
+        public static int[,] secondDimentionArray;
+
         public static void Show()
         {
             Console.Clear();
@@ -41,7 +44,7 @@ namespace Clck
                         Console.Clear();
                         Console.WriteLine("Write elements of array");
                         string textArray = Console.ReadLine();
-                        TryConvertToInt(textArray.Split(' '));
+                        oneDimensionArray = TryConvertToInt(textArray.Split(' '));
                         MenuHeads.Show(Helpers.MenuHeads.ArrayOperations);
                         ArrayOperationMenu(1);
                         lineNumber = 0;
@@ -50,9 +53,38 @@ namespace Clck
                     }
                     else
                     {
+                        Console.Clear();
+                        Console.WriteLine("Create array type: array[x][y]. Please write x and y separated by space");
+                        var xyStringArray = Console.ReadLine().Split(' ');
+                        if (xyStringArray.Length > 2)
+                        {
+                            Console.WriteLine("Error, please write only TWO numbers. Not more");
+                            Console.ReadKey();
+                            Show();
+                        }
 
-                        //2 mernii
+                        sizeSecondDimentionArray = new Point(TryConvertToInt(xyStringArray)[0],
+                            TryConvertToInt(xyStringArray)[1]);
+                        secondDimentionArray = new int[sizeSecondDimentionArray.X, sizeSecondDimentionArray.Y];
+                        for (int i = 0; i < sizeSecondDimentionArray.X; i++)
+                            for (int j = 0; j < sizeSecondDimentionArray.Y; j++)
+                            {
+                                int n;
+                                Console.Write($"\narray[{i}][{j}] = ");
+                                var tempNumber = Console.ReadLine();
+                                if (int.TryParse(tempNumber, out n))
+                                    secondDimentionArray[i, j] = int.Parse(tempNumber);
+                                else
+                                {
+                                    Console.WriteLine("Write correct numbers. AnyKey to restart");
+                                    Console.ReadKey();
+                                    Show();
+                                }
+                            }
+                        MenuHeads.Show(Helpers.MenuHeads.ArrayOperations);
+                        ArrayOperationMenu(2);
                     }
+
                     break;
             }
 
@@ -103,24 +135,41 @@ namespace Clck
                         Menu.Show();
                     }
 
+                    if (dimension == 2 && lineNumber == 1)
+                    {
+                        int sum = 0;
+                        for (int i = 0; i < sizeSecondDimentionArray.X; i++)
+                            for (int j = 0; j < sizeSecondDimentionArray.Y; j++)
+                                sum += secondDimentionArray[i, j];
+                        Program.WriteLog($"Sum off this array is {sum}");
+                        Console.Clear();
+                        Console.Write(sum);
+                        Console.WriteLine("\nPress any key");
+                        Console.ReadKey();
+                        MenuHeads.Show(Helpers.MenuHeads.ArrayOperations);
+                        ArrayOperationMenu(2);
+                    }
+
                     break;
             }
+
             ArrayOperationMenu(dimension);
 
 
         }
 
-        public static void TryConvertToInt(string[] text)
+        public static int[] TryConvertToInt(string[] text)
         {
+
+            int[] temp = new int[text.Length];
             Program.WriteLog($"Making one dimension array");
-            oneDimensionArray = new int[text.Length];
             int n;
 
             for (int i = 0; i < text.Length; i++)
             {
                 if (int.TryParse(text[i], out n))
                 {
-                    oneDimensionArray[i] = int.Parse(text[i]);
+                    temp[i] = int.Parse(text[i]);
                 }
                 else
                 {
@@ -130,6 +179,8 @@ namespace Clck
                     Show();
                 }
             }
+
+            return temp;
 
         }
     }
